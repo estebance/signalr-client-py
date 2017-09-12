@@ -38,11 +38,20 @@ class WebSocketsTransport(Transport):
                                     enable_multithread=True)
         self._session.get(self._get_url('start'))
 
-        def _receive():
-            for notification in self.ws:
-                self._handle_notification(notification)
+        # keep getting messages
+        while True:
+            try:
+                for notification in self.ws:
+                    self._handle_notification(notification)
+            except Exception as e:
+                print(e)
+                break
+        # these lines only capture one message
+        # def _receive():
+            # for notification in self.ws:
+                # self._handle_notification(notification)
 
-        return _receive
+        # return _receive
 
     def send(self, data):
         self.ws.send(json.dumps(data))
